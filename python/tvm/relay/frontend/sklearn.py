@@ -340,6 +340,9 @@ def _RobustPCA(op, inexpr, dshape, dtype, columns=None):
     Scikit-Learn Transformer:
     PCA transformation with existing eigen vector.
     """
+    if op.robust_pca_ is None:
+        return _op.copy(inexpr)
+
     eigvec = _op.const(np.array(op.robust_pca_.components_, dtype))
 
     if type(op.robust_pca_).__name__ == "PCA":

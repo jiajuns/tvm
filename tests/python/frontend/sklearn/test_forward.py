@@ -137,7 +137,6 @@ def test_threshold_onehot_encoder():
     data = np.array([[10, 1, 7], [11, 3, 8], [11, 2, 9]], dtype=np.float32)
     tohe.fit(data)
     tohe.categories_ = [[10, 11], [1, 2, 3], [7, 8, 9]]
-
     dshape = (relay.Any(), len(data[0]))
     _test_model_impl(st_helper, tohe, dshape, data)
 
@@ -191,9 +190,13 @@ def test_kbins_discretizer():
 
 def test_pca():
     st_helper = SklearnTestHelper()
-    pca = PCA(n_components=2)
     rpca = RobustPCA()
     data = np.array([[-1, -1], [-2, -1], [-3, -2], [1, 1], [2, 1], [3, 2]], dtype=np.float32)
+    rpca.robust_pca_ = None
+    dshape = (relay.Any(), len(data[0]))
+    _test_model_impl(st_helper, rpca, dshape, data)
+
+    pca = PCA(n_components=2)
     pca.fit(data)
     rpca.robust_pca_ = pca
     dshape = (relay.Any(), len(data[0]))
