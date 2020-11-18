@@ -86,6 +86,7 @@ def _RobustMissingIndicator(op, inexpr, dshape, dtype, columns=None):
         inexpr = _op.take(inexpr, indices=column_indices, axis=1)
 
     ret = _op.logical_or(_op.isnan(inexpr), _op.isinf(inexpr))
+    ret = _op.cast(ret, dtype)
 
     return ret
 
@@ -134,7 +135,7 @@ def _FeatureUnion(op, inexpr, dshape, dtype, func_name, columns=None):
     """
     out = []
     for _, mod in op.transformer_list:
-        out.append(sklearn_op_to_relay(mod, inexpr, dshape, dtype, func_name, None))
+        out.append(sklearn_op_to_relay(mod, inexpr, dshape, dtype, func_name, columns))
 
     return _op.concatenate(out, axis=1)
 
