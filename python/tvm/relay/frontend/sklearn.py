@@ -117,17 +117,6 @@ def _ThresholdOneHotEncoder(op, inexpr, dshape, dtype, columns=None):
     return ret
 
 
-def _RobustStandardScaler(op, inexpr, dshape, dtype, columns=None):
-    """
-    Sagemaker-Scikit-Learn-Extension Transformer:
-    Standardize features by removing the mean and scaling to unit variance.
-    """
-    scaler = op.scaler_
-    ret = _op.subtract(inexpr, _op.const(np.array(scaler.mean_, dtype), dtype))
-    ret = _op.divide(ret, _op.const(np.array(scaler.scale_, dtype), dtype))
-    return ret
-
-
 def _FeatureUnion(op, inexpr, dshape, dtype, func_name, columns=None):
     """
     Scikit-Learn Pipeline:
@@ -293,8 +282,11 @@ def _RobustStandardScaler(op, inexpr, dshape, dtype, columns=None):
         inexpr = _op.take(inexpr, indices=column_indices, axis=1)
 
     scaler = op.scaler_
-    ret = _op.subtract(inexpr, _op.const(np.array(scaler.mean_, dtype), dtype))
-    ret = _op.divide(ret, _op.const(np.array(scaler.scale_, dtype), dtype))
+    ret = inexpr
+    if scaler.with_mean:
+        ret = _op.subtract(ret, _op.const(np.array(scaler.mean_, dtype), dtype))
+    if scaler.with_std:
+        ret = _op.divide(ret, _op.const(np.array(scaler.scale_, dtype), dtype))
     return ret
 
 

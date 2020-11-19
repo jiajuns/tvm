@@ -121,12 +121,20 @@ def test_robust_missing_indicator():
 
 def test_robust_scaler():
     st_helper = SklearnTestHelper()
-    rss = RobustStandardScaler()
-
     data = np.array([[-1, 0], [0, 0], [1, 1], [1, 1]], dtype=np.float32)
+    dshape = (relay.Any(), len(data[0]))
+
+    rss = RobustStandardScaler()
     rss.fit(data)
 
-    dshape = (relay.Any(), len(data[0]))
+    _test_model_impl(st_helper, rss, dshape, data)
+
+    rss.scaler_.with_mean = False
+    rss.scaler_.with_std = True
+    _test_model_impl(st_helper, rss, dshape, data)
+
+    rss.scaler_.with_mean = True
+    rss.scaler_.with_std = False
     _test_model_impl(st_helper, rss, dshape, data)
 
 
