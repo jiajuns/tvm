@@ -372,6 +372,7 @@ column_transformer_op_types = {
     "RobustMissingIndicator": INPUT_FLOAT,
     "FeatureUnion": INPUT_FLOAT,
     "RobustStandardScaler": INPUT_FLOAT,
+    "RobustOrdinalEncoder": INPUT_STRING,
     "ThresholdOneHotEncoder": INPUT_STRING,
 }
 
